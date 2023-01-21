@@ -13,6 +13,18 @@ function App() {
       .then((result) => setQuestions(result));
   }
 
+  function addQuestion(question) {
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(question)
+    })
+      .then((res) => res.json())
+      .then((result) => setQuestions([...questions, result]));
+  }
+
   useEffect(() => {
     getQuestions();
     return;
@@ -21,7 +33,7 @@ function App() {
   return (
     <main>
       <AdminNavBar onChangePage={setPage} />
-      {page === "Form" ? <QuestionForm /> : <QuestionList questions={questions} />}
+      {page === "Form" ? <QuestionForm addQuestion={addQuestion} /> : <QuestionList questions={questions} />}
     </main>
   );
 }
