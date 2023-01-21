@@ -35,6 +35,29 @@ function App() {
       .then(() => setQuestions([...updatedQuestions]));
   }
 
+  function updateQuestion(question) {
+    const updatedQuestions = questions.map((val) => {
+      if (val.id === question.id) {
+        const { id, prompt, answers } = val;
+        const newValue = { id, prompt, answers, correctIndex: question.correctIndex };
+        return newValue;
+      } else {
+        return val;
+      }
+    });
+
+    const newValue = {
+      "correctIndex": parseInt(question.correctIndex)
+    };
+
+    fetch(`http://localhost:4000/questions/${question.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newValue),
+    })
+      .then(() => setQuestions([...updatedQuestions])).catch((err) => console.log(err));
+  }
+
   useEffect(() => {
     getQuestions();
     return;
@@ -43,7 +66,7 @@ function App() {
   return (
     <main>
       <AdminNavBar onChangePage={setPage} />
-      {page === "Form" ? <QuestionForm addQuestion={addQuestion} /> : <QuestionList questions={questions} deleteQuestion={deleteQuestion} />}
+      {page === "Form" ? <QuestionForm addQuestion={addQuestion} /> : <QuestionList questions={questions} deleteQuestion={deleteQuestion} updateQuestion={updateQuestion} />}
     </main>
   );
 }
